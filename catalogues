@@ -1,0 +1,103 @@
+import os
+import shutil
+
+
+def createCatalog(name:str):
+    path = f"./{name}"
+    isExists = os.path.exists(path)
+    if(isExists):
+        print("Catalog already exists.")
+    else:
+        os.mkdir(name)
+        print("Catalog succesfully created.")
+def listAllCatalogues(returnList = False, path = None, listFiles = False) -> list:
+    listOfCatalogues = []
+
+    if(path == None):
+        listOfFiles = os.listdir()
+        for file in listOfFiles:
+            if(os.path.isdir(file)):
+                listOfCatalogues.append(file)
+    elif(path != None and listFiles == True):
+        listOfFiles = os.listdir(path)
+        for file in listOfFiles:
+            listOfCatalogues.append(file)
+    if(returnList):
+        return listOfCatalogues
+    else:
+        for i in range(len(listOfCatalogues)):
+            print(f"{i+1}) {listOfCatalogues[i]}")
+def editCatalogueName(catalogueName:str, name:str):
+    path = f"./{catalogueName}"
+    isExists = os.path.exists(path)
+    if(isExists):
+        isUnique = True
+        list = listAllCatalogues(True)
+        for dir in list:
+            if(dir == name):
+                isUnique = False
+        if(isUnique):
+            os.rename(f"./{catalogueName}", f"./{name}")
+            print("Succesfully removed catalogue")
+        else:
+            print("Catalogue with this name already exists.")
+    else:
+        print("Catalog does not exist")
+def removeCatalogue(catalogueName:str):
+    path = f"./{catalogueName}"
+    isExists = os.path.exists(path)
+    if(isExists):
+        while True:
+            print("Are you sure you want to delete the catalogue? (Y/N)")
+            n = input("")
+            n = str(n)
+            n = n.lower()
+            if(n == 'n' or n == 'no'):
+                break
+            elif(n == 'y' or n == 'yes'):
+                list = listAllCatalogues(True, path, True)
+                if(len(list) > 0):
+                    while True:
+                        print("Are you sure you want to delete a catalogue that has files inside? (Y/N)")
+                        n = input("")
+                        n = str(n)
+                        n = n.lower()
+                        if(n == 'n' or n == 'no'):
+                            break
+                        elif(n == 'y' or n == 'yes'):
+                            shutil.rmtree(path)
+                            break
+                else:
+                    os.rmdir(path) 
+                break
+
+
+    else:
+        print("Catalog does not exist")
+
+def main():
+    while True:
+        print("1. Tworzenie katalogu.")
+        print("2. Wyświetlenie listy katalogów.")
+        print("3. Edycja.")
+        print("4. Usunięcie katalogu.")
+        print("5. Wyjście z programu.")
+
+        n = input("")
+
+        if(n == '1'):
+            name = input("Podaj nazwe katalogu: ")
+            createCatalog(name)
+        if(n == '2'):
+            listAllCatalogues()
+        if(n == '3'):
+            catalogueName = input("Podaj nazwe katalogu, ktory chcesz edytowac: ")
+            name = input("Podaj nowa nazwe katalogu: ")
+            editCatalogueName(catalogueName, name)
+        if(n == '4'):
+            name = input("Podaj nowa nazwe katalogu: ")
+            removeCatalogue(name)
+        if(n == '5'):
+            break
+
+main()
